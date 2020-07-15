@@ -30,6 +30,8 @@ export default {
         }
       };
       await this.$store.dispatch("entitySubmit", payload);
+      await this.$store.dispatch("entityFetch", payload);
+      await this.$store.dispatch("accountUpdate");
     }
   }
 };

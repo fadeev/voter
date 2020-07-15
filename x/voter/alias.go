@@ -47,3 +47,11 @@ type (
 	MsgCreatePoll = types.MsgCreatePoll
 )
 		
+var (
+	NewMsgCreateVote = types.NewMsgCreateVote
+)
+
+type (
+	MsgCreateVote = types.MsgCreateVote
+)
+		

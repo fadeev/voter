@@ -4,7 +4,7 @@
       <app-text type="h1">voter</app-text>
       <wallet />
       <poll-form />
-      <poll-list/>
+      <poll-list />
     </app-layout>
   </div>
 </template>
