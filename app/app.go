@@ -4,12 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-	"path/filepath"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	"github.com/spf13/viper"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
@@ -78,15 +74,10 @@ type NewApp struct {
 	supplyKeeper  supply.Keeper
 	paramsKeeper  params.Keeper
 	voterKeeper   voter.Keeper
-	wasmKeeper    wasm.Keeper
 
 	mm *module.Manager
 
 	sm *module.SimulationManager
-}
-
-type WasmWrapper struct {
-	Wasm wasm.WasmConfig `mapstructure:"wasm"`
 }
 
 var _ simapp.App = (*NewApp)(nil)
@@ -157,20 +148,6 @@ func NewInitApp(
 		app.cdc,
 		keys[voter.StoreKey],
 	)
-
-	var wasmRouter = bApp.Router()
-	// better way to get this dir???
-	homeDir := viper.GetString(cli.HomeFlag)
-	wasmDir := filepath.Join(homeDir, "wasm")
-
-	wasmWrap := WasmWrapper{Wasm: wasm.DefaultWasmConfig()}
-	err := viper.Unmarshal(&wasmWrap)
-	if err != nil {
-		panic("error while reading wasm config: " + err.Error())
-	}
-	wasmConfig := wasmWrap.Wasm
-	supportedFeatures := "staking"
-	app.wasmKeeper = wasm.NewKeeper(app.cdc, keys[wasm.StoreKey], app.accountKeeper, app.bankKeeper, app.stakingKeeper, wasmRouter, wasmDir, wasmConfig, supportedFeatures, nil, nil)
 
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
